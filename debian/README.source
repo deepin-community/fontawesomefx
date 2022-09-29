@@ -1,0 +1,10 @@
+Information about fontawesomefx
+-------------------------------
+
+Steps to create the original tarball:
+
+1. git clone https://Jerady@bitbucket.org/Jerady/fontawesomefx.git
+2. git checkout fontawesomefx-9.1.2
+3. find . -name "*.jar" -delete
+4. tar caf fontawesomefx_9.1.2.orig.tar.xz fontawesomefx
+

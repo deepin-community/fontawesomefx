@@ -1,0 +1,113 @@
+From: Markus Koschany <apo@debian.org>
+Date: Mon, 8 Oct 2018 15:24:44 +0200
+Subject: build
+
+Use Debian's system libraries and make it Debian compliant.
+
+---
+ build.gradle | 67 ++++++++----------------------------------------------------
+ 1 file changed, 9 insertions(+), 58 deletions(-)
+
+diff --git a/build.gradle b/build.gradle
+index 0e6b7b7..b7b15a9 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -5,9 +5,6 @@ buildscript {
+     repositories {
+         jcenter()
+     }
+-    dependencies {
+-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+-    }
+ }
+ 
+ // Create the pom configuration:
+@@ -33,47 +30,18 @@ def pomConfig = {
+ }
+ 
+ subprojects {
+-    apply plugin: 'maven-publish'
+-    apply plugin: 'com.jfrog.bintray'
+     apply plugin: "java"
+-    apply plugin: "signing"
+-
+-    signing {
+-        sign configurations.archives
+-    }
+ 
+     group = artifactGroupId
+     sourceCompatibility = '1.9'
+     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+ 
+-    bintray {
+-        user = System.getenv('BINTRAY_USER')
+-        key = System.getenv('BINTRAY_KEY')
+-        pkg {
+-            repo = 'maven'
+-            name = artifactName
+-            userOrg = artifactUserOrg
+-            licenses = artifactLicenses
+-            vcsUrl = artifactGitUrl
+-            publications = artifactPublications
+-            websiteUrl = artifactWebSiteUrl
+-            issueTrackerUrl = artifactIssueTrackerUrl
+-            publicDownloadNumbers = true
+-            version {
+-                gpg {
+-                    sign = true
+-                    passphrase = System.getenv('SIGNING_PASSWORD')
+-                }
+-                name = '9.1.2'
+-                desc = 'FontAwesomeFX 9.1.2'
+-                vcsTag = 'fontawesomefx-9.1.2'
+-            }
+-        }
+-    }
+-
+     repositories {
+         mavenCentral()
+         mavenLocal()
++        flatDir {
++            dirs '/usr/share/java/'
++        }
+     }
+ 
+     task javadocJar(type: Jar) {
+@@ -86,31 +54,14 @@ subprojects {
+         classifier "sources"
+     }
+ 
+-    publishing {
+-        publications {
+-            mavenJava(MavenPublication) {
+-                from components.java
+-                artifact sourceJar {
+-                    classifier "sources"
+-                }
+-
+-                artifact javadocJar {
+-                    classifier "javadoc"
+-                }
+-
+-                pom.withXml {
+-                    def root = asNode()
+-                    root.appendNode('description', artifactDescription)
+-                    root.appendNode('name', artifactName)
+-                    root.appendNode('url', artifactWebSiteUrl)
+-                    root.children().last() + pomConfig
+-                }
+-            }
+-        }
+-    }
+-
+     dependencies {
+         testCompile 'junit:junit:4.10'
++        compile name: 'javafx-base'
++        compile name: 'javafx-swing'
++        compile name: 'javafx-web'
++        compile name: 'javafx-graphics'
++        compile name: 'javafx-controls'
++        compile name: 'javafx-fxml'
+     }
+ 
+     afterEvaluate {

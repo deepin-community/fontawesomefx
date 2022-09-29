@@ -1,0 +1,157 @@
+apply plugin: 'base'
+apply from: 'deploy.gradle'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+    }
+}
+
+// Create the pom configuration:
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "developer-id"
+            name "developer-name"
+            email "dev@d.com"
+        }
+    }
+
+    scm {
+        url "https://github.com/yourgithubaccount/example"
+    }
+}
+
+subprojects {
+    apply plugin: 'maven-publish'
+    apply plugin: 'com.jfrog.bintray'
+    apply plugin: "java"
+    apply plugin: "signing"
+
+    signing {
+        sign configurations.archives
+    }
+
+    group = artifactGroupId
+    sourceCompatibility = '1.9'
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+    bintray {
+        user = System.getenv('BINTRAY_USER')
+        key = System.getenv('BINTRAY_KEY')
+        pkg {
+            repo = 'maven'
+            name = artifactName
+            userOrg = artifactUserOrg
+            licenses = artifactLicenses
+            vcsUrl = artifactGitUrl
+            publications = artifactPublications
+            websiteUrl = artifactWebSiteUrl
+            issueTrackerUrl = artifactIssueTrackerUrl
+            publicDownloadNumbers = true
+            version {
+                gpg {
+                    sign = true
+                    passphrase = System.getenv('SIGNING_PASSWORD')
+                }
+                name = '9.1.2'
+                desc = 'FontAwesomeFX 9.1.2'
+                vcsTag = 'fontawesomefx-9.1.2'
+            }
+        }
+    }
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
+    task javadocJar(type: Jar) {
+        classifier 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    task sourceJar(type: Jar) {
+        from sourceSets.main.allJava
+        classifier "sources"
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifact sourceJar {
+                    classifier "sources"
+                }
+
+                artifact javadocJar {
+                    classifier "javadoc"
+                }
+
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('description', artifactDescription)
+                    root.appendNode('name', artifactName)
+                    root.appendNode('url', artifactWebSiteUrl)
+                    root.children().last() + pomConfig
+                }
+            }
+        }
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.10'
+    }
+
+    afterEvaluate {
+        repositories {
+            jcenter()
+        }
+
+        compileJava {
+            doFirst {
+                options.compilerArgs = [
+                        '--module-path', classpath.asPath,
+                ]
+                classpath = files()
+            }
+        }
+
+        test {
+            inputs.property("moduleName", moduleName)
+            doFirst {
+                jvmArgs = [
+                        '--module-path', classpath.asPath,
+                        '--add-modules', 'ALL-MODULE-PATH',
+                        '--add-reads', "$moduleName=junit",
+                        '--patch-module', "$moduleName=" + files(sourceSets.test.java.outputDir).asPath,
+                ]
+                classpath = files()
+            }
+        }
+
+        jar {
+            inputs.property("moduleName", moduleName)
+            manifest {
+                attributes('Main-Class': mainClassName)
+                attributes('Automatic-Module-Name': moduleName)
+            }
+        }
+
+    }
+
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.2'
+}

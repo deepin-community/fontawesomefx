@@ -1,0 +1,37 @@
+# List of POM files for the package
+# Format of this file is:
+# <path to pom file> [option]*
+# where option can be:
+#   --ignore: ignore this POM and its artifact if any
+#   --ignore-pom: don't install the POM. To use on POM files that are created
+#     temporarily for certain artifacts such as Javadoc jars. [mh_install, mh_installpoms]
+#   --no-parent: remove the <parent> tag from the POM
+#   --package=<package>: an alternative package to use when installing this POM
+#      and its artifact
+#   --has-package-version: to indicate that the original version of the POM is the same as the upstream part
+#      of the version for the package.
+#   --keep-elements=<elem1,elem2>: a list of XML elements to keep in the POM
+#      during a clean operation with mh_cleanpom or mh_installpom
+#   --artifact=<path>: path to the build artifact associated with this POM,
+#      it will be installed when using the command mh_install. [mh_install]
+#   --java-lib: install the jar into /usr/share/java to comply with Debian
+#      packaging guidelines
+#   --usj-name=<name>: name to use when installing the library in /usr/share/java
+#   --usj-version=<version>: version to use when installing the library in /usr/share/java
+#   --no-usj-versionless: don't install the versionless link in /usr/share/java
+#   --dest-jar=<path>: the destination for the real jar.
+#     It will be installed with mh_install. [mh_install]
+#   --classifier=<classifier>: Optional, the classifier for the jar. Empty by default.
+#   --site-xml=<location>: Optional, the location for site.xml if it needs to be installed.
+#     Empty by default. [mh_install]
+#
+debian/poms/fontawesomefx-commons.pom.xml --java-lib --artifact=fontawesomefx-commons/build/libs/fontawesomefx-commons-9.1.2.jar
+debian/poms/fontawesomefx-controls.pom.xml --java-lib --artifact=fontawesomefx-controls/build/libs/fontawesomefx-controls-9.1.2.jar
+debian/poms/fontawesomefx-emojione.pom.xml --java-lib --artifact=fontawesomefx-emojione/build/libs/fontawesomefx-emojione-3.1.1-9.1.2.jar
+debian/poms/fontawesomefx-fontawesome.pom.xml --java-lib --artifact=fontawesomefx-fontawesome/build/libs/fontawesomefx-fontawesome-4.7.0-9.1.2.jar
+debian/poms/fontawesomefx-icons525.pom.xml --java-lib --artifact=fontawesomefx-icons525/build/libs/fontawesomefx-icons525-4.2.0-9.1.2.jar
+debian/poms/fontawesomefx-materialdesignfont.pom.xml --java-lib --artifact=fontawesomefx-materialdesignfont/build/libs/fontawesomefx-materialdesignfont-2.0.26-9.1.2.jar
+debian/poms/fontawesomefx-materialicons.pom.xml --java-lib --artifact=fontawesomefx-materialicons/build/libs/fontawesomefx-materialicons-2.2.0-9.1.2.jar
+debian/poms/fontawesomefx-materialstackicons.pom.xml --java-lib --artifact=fontawesomefx-materialstackicons/build/libs/fontawesomefx-materialstackicons-2.1-5-9.1.2.jar
+debian/poms/fontawesomefx-octicons.pom.xml --java-lib --artifact=fontawesomefx-octicons/build/libs/fontawesomefx-octicons-4.3.0-9.1.2.jar
+debian/poms/fontawesomefx-weathericons.pom.xml --java-lib --artifact=fontawesomefx-weathericons/build/libs/fontawesomefx-weathericons-2.0.10-9.1.2.jar
